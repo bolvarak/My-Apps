@@ -26,12 +26,14 @@ class GitHub {
 	//////////      The Constants    //////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	const GITHUB_BASE_URI = 'https://github.com/api/v2/json';
+	const GRAVATAR_URI    = 'http://www.gravatar.com/avatar/:sAvatarHash?size=:iSize&forceDefault=y';
 	////////////////////////////////////////////////////////////////////////
 	//////////      The Properties    /////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	protected static $oInstance = null; // This is our instance container
 	protected $sBranch          = null; // This is the user's chosen branch
 	protected $aBranches        = null; // This is a list of the branches associated with a repository
+	protected $sGravatar        = null; // This is the URL to the user's gravatar
 	protected $sPassword        = null; // This is the user's password
 	protected $aRepositories    = null; // This is a list of the user's repositories
 	protected $aRepository      = null; // This is the user's chosen repository
@@ -110,6 +112,27 @@ class GitHub {
 			$aBranches       = $this->callResource("repos/show/{$this->sUsername}/{$this->aRepository['name']}/branches", 'branches');
 			// Set the branches
 			$this->aBranches = (array) $aBranches;
+		}
+		// Return instance
+		return $this;
+	}
+	/**
+	 * This method loads the user's gravatar
+	 * from GitHub's user object response
+	 * @param integer $iSize
+	 * @return GitHub $this
+	**/
+	public function loadGravatar($iSize = 420) {
+		// Make sure we have a user object
+		if (empty($this->aUser) === false) {
+			// Set the keys that must be replaced
+			$aReplace        = array(':sAvatarHash', ':iSize');
+			// Set the data to replace the keys with
+			$aWith           = array($this->aUser['gravatar_id'], $iSize);
+			// Set the gravatar url
+			$sGravatarUri    = (string) str_replace($aReplace, $aWith, self::GRAVATAR_URI);
+			// Set the url into the system
+			$this->sGravatar = (string) $sGravatarUri;
 		}
 		// Return instance
 		return $this;
@@ -235,6 +258,16 @@ class GitHub {
 		return $this->aBranches;
 	}
 	/**
+	 * This method grabs the current
+	 * Gravatar URL from the system
+	 * @return string 
+	**/
+	public function getGravatar() {
+		// Return the current
+		// gravatar URL
+		return $this->sGravatar;
+	}
+	/**
 	 * This method grabs the current 
 	 * user password from the system
 	 * @return string
@@ -310,6 +343,18 @@ class GitHub {
 		return $this;
 	}
 	/**
+	 * This method sets the current't
+	 * user's Gravatar url into the system
+	 * @param string $sUri
+	 * @return GitHub $this
+	**/
+	public function setGravatar($sUri) {
+		// Set the Gravatar URL
+		$this->sGravatar = (string) $sUri;
+		// Return instance
+		return $this;
+	}
+	/**
 	 * This method sets the current working
 	 * password into the system
 	 * @param string $sPassword
@@ -370,3 +415,4 @@ class GitHub {
 		return $this;
 	}
 }
+	

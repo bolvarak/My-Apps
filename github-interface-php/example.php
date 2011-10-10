@@ -23,6 +23,8 @@ $oGitHub = GitHub::getInstance(); // This is the singleton method
 // $oGitHub = new GitHub();
 // Load the user
 $oGitHub->login('username', 'password');
+// Load the user's gravatar
+$oGitHub->loadGravatar();
 // Load the user's list of repositories
 $oGitHub->loadRepositories();
 // Load a specific repository
@@ -30,4 +32,4 @@ $oGitHub->loadRepository('repositoryName');
 // Load the repository's branches
 $oGitHub->loadBranches();
 // Dump the object
-var_dump($oGitHub);
+print_r($oGitHub);
